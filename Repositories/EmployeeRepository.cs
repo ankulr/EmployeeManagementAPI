@@ -1,6 +1,7 @@
 ﻿using EmployeeManagement.Interfaces;
 using EmployeeManagement.Models;
 using EmployeeManagement.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace EmployeeManagement.Repositories
 {
@@ -13,39 +14,45 @@ namespace EmployeeManagement.Repositories
             _context = context;
         }
 
-       public  Task<Employee> AddEmployee(Employee employee)
+       public  async Task<Employee> AddAsync(Employee employee)
         {
-            throw new NotImplementedException();
+            await _context.Employees.AddAsync(employee);
+            await _context.SaveChangesAsync();
+            return employee;
         }
 
-     public    Task<bool> DeleteAsync(Employee employee)
+        public async Task DeleteAsync(Employee employee)
         {
-            throw new NotImplementedException();
+             _context.Employees.Remove(employee);
+            await _context.SaveChangesAsync();
         }
 
-        public Task<bool> DepartmentExists(int departmentid)
+        public Task<bool> DepartmentExistsAsync(int departmentid)
         {
-            throw new NotImplementedException();
+            return _context.Departments.AnyAsync(e => e.DepartmentId == departmentid);
         }
 
-        public Task<bool> EmailExitsAsync(string email)
+        public async Task<bool> EmailExitsAsync(string email)
         {
-            throw new NotImplementedException();
+            return await _context.Employees.AnyAsync(e => e.Email == email);
+
         }
 
-        public  Task<IEnumerable<Employee>> GetAllAsync()
+        public async  Task<IEnumerable<Employee>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Employees.Include(e => e.Department).ToListAsync();
         }
 
-     public    Task<Employee> GetByIdAsync(int id)
+     public  async  Task<Employee> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return  _context.Employees.FirstOrDefault(e => e.EmployeeId == id);
         }
 
-      public   Task<Employee> UpdateAsync(Employee employee)
+      public  async  Task<Employee> UpdateAsync(Employee employee)
         {
-            throw new NotImplementedException();
+             _context.Employees.Update(employee);
+            await _context.SaveChangesAsync();
+            return employee;
         }
     }
 }

@@ -5,14 +5,14 @@ namespace EmployeeManagement.Interfaces
 {
     public interface IEmployeeRepository
     {
-        Task<Employee> AddEmployee(Employee employee);
+        Task<Employee> AddAsync(Employee employee);
         Task<Employee> GetByIdAsync(int id);
         Task<IEnumerable<Employee>> GetAllAsync();
        Task<Employee> UpdateAsync(Employee employee);
-         Task<bool> DeleteAsync(Employee employee);
+         Task  DeleteAsync(Employee employee);
         Task<bool> EmailExitsAsync(string email);
 
-        Task<bool> DepartmentExists(int departmentid);
+        Task<bool> DepartmentExistsAsync(int departmentid);
 
 
     }

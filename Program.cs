@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 builder.Services.AddDbContext<ApplicationDbContext>(options => 
@@ -19,6 +19,7 @@ options.UseSqlServer(builder.Configuration.GetConnectionString("EmployeeManageme
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 
+var app = builder.Build();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
