@@ -8,7 +8,7 @@ namespace EmployeeManagement.Interfaces
          Task<EmployeeResponseDTO> GetEmployeeByIdAsync(int id);
 
         Task<IEnumerable<EmployeeResponseDTO>> GetAllEmployeesAsync();
-        Task<EmployeeResponseDTO> UpdateEmployeeAsync(int id, UpdateEmployeeDTO employeeDto);
+        Task<EmployeeResponseDTO> UpdateEmployeeAsync(int id, UpdateEmployeeDTO dto);
         Task DeleteEmployeeAsync(int id);
     }
 }

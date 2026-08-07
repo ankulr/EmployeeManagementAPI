@@ -48,6 +48,18 @@ namespace EmployeeManagement.Controllers
 
         }
 
+        [HttpPut("{id}")]
+        public async Task<ActionResult<EmployeeResponseDTO>> Update(int id, UpdateEmployeeDTO dto)
+        {
+            var employee = await _employeeService.UpdateEmployeeAsync(id, dto);
+
+            if (employee == null)
+            {
+                return BadRequest("Employee Not Updated");
+            }
+
+            return Ok("updated");
+        }
 
     }
 }

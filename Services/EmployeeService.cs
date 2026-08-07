@@ -1,6 +1,7 @@
 ﻿using EmployeeManagement.DTOs;
 using EmployeeManagement.Interfaces;
 using EmployeeManagement.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace EmployeeManagement.Services
 {
@@ -129,9 +130,58 @@ namespace EmployeeManagement.Services
             return responseDTO;
         }
 
-        public Task<EmployeeResponseDTO> UpdateEmployeeAsync(int id, UpdateEmployeeDTO employeeDto)
+        public async Task<EmployeeResponseDTO> UpdateEmployeeAsync(int id, UpdateEmployeeDTO dto)
         {
-            throw new NotImplementedException();
+            var employee = await _employeeRepository.GetByIdAsync(id);
+
+            if(employee == null)
+            {
+                throw new Exception("Employee not found");
+            }
+
+            /// salary check
+                if(dto .Salary <=0)
+            {
+                throw new Exception("Salary must be greater than zero");
+
+            }
+
+            // department check
+            if(! await _employeeRepository.DepartmentExistsAsync(dto.DepartmentId))
+            {
+                throw new Exception("Department already exists");
+            }
+
+            if(dto.Email != employee.Email && await _employeeRepository.EmailExitsAsync(dto.Email))
+            {
+                throw new Exception("Email already exists");
+            }
+
+            // updating the employee entity
+
+            employee.Name = dto.Name;
+            employee.Salary = dto.Salary;
+            employee.DepartmentId = dto.DepartmentId;
+            employee.Email = dto.Email;
+
+            // Save Entity 
+
+            Employee updatedEmployee = await _employeeRepository.UpdateAsync(employee);
+
+            // Updated employee to response dto
+
+            return new EmployeeResponseDTO
+            {
+                EmployeeId = updatedEmployee.EmployeeId,
+                Name = updatedEmployee.Name,
+                Salary = updatedEmployee.Salary,
+                Email = updatedEmployee.Email,
+                DepartmentId = updatedEmployee.DepartmentId,
+                DepartmentName = updatedEmployee.Department?.DepartmentName
+
+            };
+
+
         }
     }
 }
