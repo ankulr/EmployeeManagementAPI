@@ -4,11 +4,11 @@ namespace EmployeeManagement.Interfaces
 {
     public interface IEmployeeService
     {
-     public    Task<EmployeeResponseDTO> CreateEmployeeAsync(EmployeeResponseDTO employeeDto);
-     public    Task<EmployeeResponseDTO> GetEmployeeByIdAsync(int id);
+         Task<EmployeeResponseDTO> CreateEmployeeAsync(CreateEmployeeDTO  dto);
+         Task<EmployeeResponseDTO> GetEmployeeByIdAsync(int id);
 
-     public   Task<IEnumerable<EmployeeResponseDTO>> GetAllEmployeesAsync();
-     public   Task UpdateEmployeeAsync(int id, UpdateEmployeeDTO employeeDto);
-     public    Task DeleteEmployeeAsync(int id);
+        Task<IEnumerable<EmployeeResponseDTO>> GetAllEmployeesAsync();
+        Task<EmployeeResponseDTO> UpdateEmployeeAsync(int id, UpdateEmployeeDTO employeeDto);
+        Task DeleteEmployeeAsync(int id);
     }
 }
