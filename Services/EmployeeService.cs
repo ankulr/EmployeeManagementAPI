@@ -40,7 +40,7 @@ namespace EmployeeManagement.Services
 
             if(!departmentExists)
             {
-                throw new Exception("Departent doesnot exist");
+                throw new Exception("Department doesnot exist");
             }
 
             // Entity mapping dto to employee
@@ -77,14 +77,56 @@ namespace EmployeeManagement.Services
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<EmployeeResponseDTO>> GetAllEmployeesAsync()
+        public async Task<IEnumerable<EmployeeResponseDTO>> GetAllEmployeesAsync()
         {
-            throw new NotImplementedException();
+            // Get all the employees
+            IEnumerable<Employee> employees = await _employeeRepository.GetAllAsync();
+
+            // Create response list 
+
+            List<EmployeeResponseDTO> employeeResponsedto = new List<EmployeeResponseDTO>();
+
+            // mapping each employee to the employeeResponse list
+
+            foreach(Employee employee in employees)
+            {
+                EmployeeResponseDTO response = new EmployeeResponseDTO()
+                {
+                    EmployeeId= employee.EmployeeId,
+                    Name = employee.Name,
+                    Salary =  employee.Salary,
+                    DepartmentId = employee.DepartmentId,
+                    DepartmentName = employee.Department.DepartmentName
+                };
+                employeeResponsedto.Add(response);
+            }
+
+            // returning employee response list
+
+            return employeeResponsedto;
+
+
         }
 
-        public Task<EmployeeResponseDTO> GetEmployeeByIdAsync(int id)
+        public async Task<EmployeeResponseDTO?> GetEmployeeByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            var employee = await _employeeRepository.GetByIdAsync(id);
+
+            if(employee == null)
+            {
+                return null;
+            }
+
+            EmployeeResponseDTO responseDTO = new EmployeeResponseDTO
+            {
+                EmployeeId = employee.EmployeeId,
+                Name = employee.Name,
+                Salary = employee.Salary,
+                DepartmentId = employee.DepartmentId,
+                DepartmentName = employee.Department.DepartmentName
+            };
+
+            return responseDTO;
         }
 
         public Task<EmployeeResponseDTO> UpdateEmployeeAsync(int id, UpdateEmployeeDTO employeeDto)

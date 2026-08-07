@@ -17,6 +17,28 @@ namespace EmployeeManagement.Controllers
             _employeeService = employeeService;
         }
 
+
+        [HttpGet]
+
+        public async Task<ActionResult<IEnumerable<EmployeeResponseDTO>>> GetAll()
+        {
+            var employees = await _employeeService.GetAllEmployeesAsync();
+            return Ok(employees);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<EmployeeResponseDTO>> GetById(int id)
+        {
+            var employee = await _employeeService.GetEmployeeByIdAsync(id);
+
+            if(employee == null)
+            {
+                return BadRequest("Employee not found");
+            }
+            return Ok(employee);
+        }
+
+
         [HttpPost]
         public async Task<ActionResult<EmployeeResponseDTO>>  Create(CreateEmployeeDTO dto)
         {

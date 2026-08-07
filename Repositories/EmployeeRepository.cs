@@ -45,7 +45,7 @@ namespace EmployeeManagement.Repositories
 
      public  async  Task<Employee> GetByIdAsync(int id)
         {
-            return  _context.Employees.FirstOrDefault(e => e.EmployeeId == id);
+            return await _context.Employees.AsNoTracking().Include(e => e.Department).FirstOrDefaultAsync(x => x.EmployeeId == id);
         }
 
       public  async  Task<Employee> UpdateAsync(Employee employee)
