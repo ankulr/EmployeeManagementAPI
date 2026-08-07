@@ -73,9 +73,16 @@ namespace EmployeeManagement.Services
 
         }
 
-        public Task DeleteEmployeeAsync(int id)
+        public async Task DeleteEmployeeAsync(int id)
         {
-            throw new NotImplementedException();
+            Employee employee = await _employeeRepository.GetByIdAsync(id);
+
+            if(employee == null)
+            {
+                throw new Exception("Employee not found");
+            }
+
+            await _employeeRepository.DeleteAsync(employee);
         }
 
         public async Task<IEnumerable<EmployeeResponseDTO>> GetAllEmployeesAsync()

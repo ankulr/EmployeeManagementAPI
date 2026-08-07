@@ -61,5 +61,12 @@ namespace EmployeeManagement.Controllers
             return Ok("updated");
         }
 
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            await _employeeService.DeleteEmployeeAsync(id);
+            return NoContent();
+        }
+
     }
 }
