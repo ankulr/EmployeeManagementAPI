@@ -1,5 +1,6 @@
 using EmployeeManagement.Data;
 using EmployeeManagement.Interfaces;
+using EmployeeManagement.Middleware;
 using EmployeeManagement.Repositories;
 using EmployeeManagement.Services;
 using Microsoft.EntityFrameworkCore;
@@ -28,6 +29,8 @@ if(app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<GlobalExceptionMiddleware>();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

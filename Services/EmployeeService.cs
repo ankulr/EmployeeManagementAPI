@@ -1,4 +1,5 @@
 ﻿using EmployeeManagement.DTOs;
+using EmployeeManagement.Exceptions;
 using EmployeeManagement.Interfaces;
 using EmployeeManagement.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -17,7 +18,7 @@ namespace EmployeeManagement.Services
         {
             if (string.IsNullOrWhiteSpace(dto.Name))
             {
-                throw new Exception("Employee name is required");
+                throw new BadRequestException("Employee name is required");
             }
             if(string.IsNullOrWhiteSpace(dto.Email))
             {
@@ -25,14 +26,14 @@ namespace EmployeeManagement.Services
             }
             if(dto.Salary <= 0)
             {
-                throw new Exception("salary must be greater than zero");
+                throw new BadRequestException("salary must be greater than zero");
             }
 
             // Duplicate email
             bool emailexists =  await  _employeeRepository.EmailExitsAsync(dto.Email);
             if(emailexists)
             {
-                throw new Exception("Email alreday exists");
+                throw new ConflictException("Email alreday exists");
             }
 
             // Department exists
@@ -41,7 +42,7 @@ namespace EmployeeManagement.Services
 
             if(!departmentExists)
             {
-                throw new Exception("Department doesnot exist");
+                throw new BadRequestException("Department doesnot exist");
             }
 
             // Entity mapping dto to employee
@@ -79,7 +80,7 @@ namespace EmployeeManagement.Services
 
             if(employee == null)
             {
-                throw new Exception("Employee not found");
+                throw new NotFoundException("Employee not found");
             }
 
             await _employeeRepository.DeleteAsync(employee);
@@ -143,25 +144,25 @@ namespace EmployeeManagement.Services
 
             if(employee == null)
             {
-                throw new Exception("Employee not found");
+                throw new NotFoundException("Employee not found");
             }
 
             /// salary check
                 if(dto .Salary <=0)
             {
-                throw new Exception("Salary must be greater than zero");
+                throw new BadRequestException("Salary must be greater than zero");
 
             }
 
             // department check
             if(! await _employeeRepository.DepartmentExistsAsync(dto.DepartmentId))
             {
-                throw new Exception("Department already exists");
+                throw new ConflictException("Department already exists");
             }
 
             if(dto.Email != employee.Email && await _employeeRepository.EmailExitsAsync(dto.Email))
             {
-                throw new Exception("Email already exists");
+                throw new ConflictException("Email already exists");
             }
 
             // updating the employee entity
