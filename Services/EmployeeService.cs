@@ -4,6 +4,7 @@ using EmployeeManagement.Interfaces;
 using EmployeeManagement.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 using FluentValidation;
+using AutoMapper;
 namespace EmployeeManagement.Services
 {
     public class EmployeeService : IEmployeeService
@@ -11,13 +12,15 @@ namespace EmployeeManagement.Services
         private readonly IEmployeeRepository _employeeRepository;
         private readonly ILogger<EmployeeService> _logger;
         private readonly IValidator<CreateEmployeeDTO> _createEmployeeValidator;
+        private readonly IMapper _mapper;
 
 
-        public EmployeeService(IEmployeeRepository employeeRepository , ILogger<EmployeeService> logger , IValidator<CreateEmployeeDTO> createEmployeeValidator)
+        public EmployeeService(IEmployeeRepository employeeRepository , ILogger<EmployeeService> logger , IValidator<CreateEmployeeDTO> createEmployeeValidator ,IMapper mapper)
         {
             _employeeRepository = employeeRepository;
             _logger = logger;
             _createEmployeeValidator = createEmployeeValidator;
+            _mapper = mapper;
         }
         public async Task<EmployeeResponseDTO> CreateEmployeeAsync(CreateEmployeeDTO dto)
         {
@@ -51,13 +54,7 @@ namespace EmployeeManagement.Services
 
             // Entity mapping dto to employee
 
-            Employee employee = new Employee
-            {
-                Name = dto.Name,
-                Email = dto.Email,
-                Salary = dto.Salary,
-                DepartmentId = dto.DepartmentId,
-            };
+            Employee employee = _mapper.Map<Employee>(dto);
 
             // Saving the employee 
 
@@ -67,14 +64,8 @@ namespace EmployeeManagement.Services
 
             // Entity mapping from Employee to dto
 
-            EmployeeResponseDTO response = new EmployeeResponseDTO
-            {
-                EmployeeId = savedEmployee.EmployeeId,
-                Name = savedEmployee.Name,
-                Salary = savedEmployee.Salary,
-                DepartmentId = savedEmployee.DepartmentId
-
-            };
+            EmployeeResponseDTO response = _mapper.Map<EmployeeResponseDTO>(savedEmployee);
+           
 
             return response;
 
@@ -105,23 +96,11 @@ namespace EmployeeManagement.Services
             List<EmployeeResponseDTO> employeeResponsedto = new List<EmployeeResponseDTO>();
 
             // mapping each employee to the employeeResponse list
-
-            foreach(Employee employee in employees)
-            {
-                EmployeeResponseDTO response = new EmployeeResponseDTO()
-                {
-                    EmployeeId= employee.EmployeeId,
-                    Name = employee.Name,
-                    Salary =  employee.Salary,
-                    DepartmentId = employee.DepartmentId,
-                    DepartmentName = employee.Department.DepartmentName
-                };
-                employeeResponsedto.Add(response);
-            }
+            return _mapper.Map<IEnumerable<EmployeeResponseDTO>>(employees);
 
             // returning employee response list
 
-            return employeeResponsedto;
+            
 
 
         }
@@ -140,14 +119,7 @@ namespace EmployeeManagement.Services
 
             _logger.LogInformation("Employee with id {EmployeeId} was found successfully", id);
 
-            EmployeeResponseDTO responseDTO = new EmployeeResponseDTO
-            {
-                EmployeeId = employee.EmployeeId,
-                Name = employee.Name,
-                Salary = employee.Salary,
-                DepartmentId = employee.DepartmentId,
-                DepartmentName = employee.Department.DepartmentName
-            };
+            EmployeeResponseDTO responseDTO = _mapper.Map<EmployeeResponseDTO>(employee);
 
             return responseDTO;
         }
@@ -198,16 +170,8 @@ namespace EmployeeManagement.Services
 
             // Updated employee to response dto
 
-            return new EmployeeResponseDTO
-            {
-                EmployeeId = updatedEmployee.EmployeeId,
-                Name = updatedEmployee.Name,
-                Salary = updatedEmployee.Salary,
-                Email = updatedEmployee.Email,
-                DepartmentId = updatedEmployee.DepartmentId,
-                DepartmentName = updatedEmployee.Department?.DepartmentName
-
-            };
+            return _mapper.Map<EmployeeResponseDTO>(updatedEmployee);
+            
 
 
         }

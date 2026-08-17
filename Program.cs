@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using EmployeeManagement.Validators;
 using FluentValidation;
 using EmployeeManagement.DTOs;
+using EmployeeManagement.Mappings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,7 @@ builder.Services.AddSwaggerGen();
 
 
 
+
 // Configure the HTTP request pipeline.
 builder.Services.AddDbContext<ApplicationDbContext>(options => 
 options.UseSqlServer(builder.Configuration.GetConnectionString("EmployeeManagementConnectionString")));
@@ -25,6 +27,8 @@ options.UseSqlServer(builder.Configuration.GetConnectionString("EmployeeManageme
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IValidator<CreateEmployeeDTO>, CreateEmployeeDTOValidator>();
+builder.Services.AddAutoMapper(typeof(EmployeeProfile));
+
 var app = builder.Build();
 
 if(app.Environment.IsDevelopment())
