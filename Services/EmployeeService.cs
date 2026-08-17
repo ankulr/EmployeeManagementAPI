@@ -3,33 +3,31 @@ using EmployeeManagement.Exceptions;
 using EmployeeManagement.Interfaces;
 using EmployeeManagement.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
-
+using FluentValidation;
 namespace EmployeeManagement.Services
 {
     public class EmployeeService : IEmployeeService
     {
         private readonly IEmployeeRepository _employeeRepository;
         private readonly ILogger<EmployeeService> _logger;
+        private readonly IValidator<CreateEmployeeDTO> _createEmployeeValidator;
 
-        public EmployeeService(IEmployeeRepository employeeRepository , ILogger<EmployeeService> logger)
+
+        public EmployeeService(IEmployeeRepository employeeRepository , ILogger<EmployeeService> logger , IValidator<CreateEmployeeDTO> createEmployeeValidator)
         {
             _employeeRepository = employeeRepository;
             _logger = logger;
+            _createEmployeeValidator = createEmployeeValidator;
         }
         public async Task<EmployeeResponseDTO> CreateEmployeeAsync(CreateEmployeeDTO dto)
         {
             _logger.LogInformation("Creating employee with email {Email}", dto.Email);
-            if (string.IsNullOrWhiteSpace(dto.Name))
+
+            var validResult = await _createEmployeeValidator.ValidateAsync(dto);
+            if(!validResult.IsValid)
             {
-                throw new BadRequestException("Employee name is required");
-            }
-            if(string.IsNullOrWhiteSpace(dto.Email))
-            {
-                throw new InvalidOperationException("Email is required");
-            }
-            if(dto.Salary <= 0)
-            {
-                throw new BadRequestException("salary must be greater than zero");
+                var errors = string.Join(",", validResult.Errors.Select(x => x.ErrorMessage));
+                throw new BadRequestException(errors);
             }
 
             // Duplicate email

@@ -4,6 +4,9 @@ using EmployeeManagement.Middleware;
 using EmployeeManagement.Repositories;
 using EmployeeManagement.Services;
 using Microsoft.EntityFrameworkCore;
+using EmployeeManagement.Validators;
+using FluentValidation;
+using EmployeeManagement.DTOs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +24,7 @@ options.UseSqlServer(builder.Configuration.GetConnectionString("EmployeeManageme
 
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
-
+builder.Services.AddScoped<IValidator<CreateEmployeeDTO>, CreateEmployeeDTOValidator>();
 var app = builder.Build();
 
 if(app.Environment.IsDevelopment())
