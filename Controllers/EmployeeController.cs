@@ -31,10 +31,7 @@ namespace EmployeeManagement.Controllers
         {
             var employee = await _employeeService.GetEmployeeByIdAsync(id);
 
-            if(employee == null)
-            {
-                return BadRequest("Employee not found");
-            }
+           
             return Ok(employee);
         }
 
