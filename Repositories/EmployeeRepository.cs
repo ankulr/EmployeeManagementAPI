@@ -54,5 +54,10 @@ namespace EmployeeManagement.Repositories
             await _context.SaveChangesAsync();
             return employee;
         }
+
+        public async Task<IEnumerable<Employee>> GetPagedEmployeeAsync(int pageNumber ,int pageSize)
+        {
+            return await _context.Employees.Include(e => e.Department).Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+        }
     }
 }

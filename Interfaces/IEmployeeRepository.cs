@@ -13,6 +13,7 @@ namespace EmployeeManagement.Interfaces
         Task<bool> EmailExitsAsync(string email);
 
         Task<bool> DepartmentExistsAsync(int departmentid);
+        Task<IEnumerable<Employee>> GetPagedEmployeeAsync(int pageNUmber, int pageSize);
 
 
     }

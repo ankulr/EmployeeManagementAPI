@@ -129,27 +129,27 @@ namespace EmployeeManagement.Services
             _logger.LogInformation("Updating employee with id {EmployeeId}", id);
             var employee = await _employeeRepository.GetByIdAsync(id);
 
-            if(employee == null)
+            if (employee == null)
             {
                 _logger.LogWarning("Update failed Employee {EmployeeId} not found", id);
                 throw new NotFoundException("Employee not found");
             }
 
             /// salary check
-                if(dto .Salary <=0)
+            if (dto.Salary <= 0)
             {
                 throw new BadRequestException("Salary must be greater than zero");
 
             }
 
             // department check
-            if(! await _employeeRepository.DepartmentExistsAsync(dto.DepartmentId))
+            if (!await _employeeRepository.DepartmentExistsAsync(dto.DepartmentId))
             {
                 _logger.LogWarning("Update failed.Department {DepartmentId} does nopt exists");
                 throw new BadRequestException("Department already exists");
             }
 
-            if(dto.Email != employee.Email && await _employeeRepository.EmailExitsAsync(dto.Email))
+            if (dto.Email != employee.Email && await _employeeRepository.EmailExitsAsync(dto.Email))
             {
                 _logger.LogWarning("Update failed. Email {Email} already exist", dto.Email);
                 throw new ConflictException("Email already exists");
@@ -171,9 +171,14 @@ namespace EmployeeManagement.Services
             // Updated employee to response dto
 
             return _mapper.Map<EmployeeResponseDTO>(updatedEmployee);
-            
+        
+           
+        }
+        public async Task<IEnumerable<EmployeeResponseDTO>> GetPagedEmployeeAsync(int pageNumber, int pageSize)
+        {
+            var employees = await _employeeRepository.GetPagedEmployeeAsync(pageNumber , pageSize);
 
-
+            return _mapper.Map<IEnumerable<EmployeeResponseDTO>>(employees);
         }
     }
 }

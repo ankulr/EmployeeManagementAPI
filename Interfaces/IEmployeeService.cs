@@ -10,5 +10,6 @@ namespace EmployeeManagement.Interfaces
         Task<IEnumerable<EmployeeResponseDTO>> GetAllEmployeesAsync();
         Task<EmployeeResponseDTO> UpdateEmployeeAsync(int id, UpdateEmployeeDTO dto);
         Task DeleteEmployeeAsync(int id);
+        Task<IEnumerable<EmployeeResponseDTO>> GetPagedEmployeeAsync(int pageNumber, int pageSize);
     }
 }

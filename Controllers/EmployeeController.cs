@@ -65,5 +65,14 @@ namespace EmployeeManagement.Controllers
             return NoContent();
         }
 
+        [HttpGet("paged")]
+        
+        public async Task<ActionResult<IEnumerable<EmployeeResponseDTO>>> GetPagedEmployees([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        {
+            var employees = await _employeeService.GetPagedEmployeeAsync(pageNumber, pageSize);
+
+            return Ok(employees);
+        }
+
     }
 }
