@@ -1,4 +1,5 @@
 ﻿using EmployeeManagement.DTOs;
+using EmployeeManagement.DTOs.Common;
 using EmployeeManagement.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -71,6 +72,13 @@ namespace EmployeeManagement.Controllers
         {
             var employees = await _employeeService.GetPagedEmployeeAsync(pageNumber, pageSize);
 
+            return Ok(employees);
+        }
+
+        [HttpGet("search")]
+        public async Task<ActionResult<IEnumerable<EmployeeResponseDTO>>> SearchEmployees([FromQuery] EmployeeSearchDTO searchDTO)
+        {
+            var employees = await _employeeService.SearchEmployeeAsync(searchDTO);
             return Ok(employees);
         }
 

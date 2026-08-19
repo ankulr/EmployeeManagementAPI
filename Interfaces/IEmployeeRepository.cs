@@ -1,4 +1,5 @@
-﻿using EmployeeManagement.Models;
+﻿using EmployeeManagement.DTOs.Common;
+using EmployeeManagement.Models;
 using System.Collections;
 
 namespace EmployeeManagement.Interfaces
@@ -14,6 +15,8 @@ namespace EmployeeManagement.Interfaces
 
         Task<bool> DepartmentExistsAsync(int departmentid);
         Task<IEnumerable<Employee>> GetPagedEmployeeAsync(int pageNUmber, int pageSize);
+
+        Task<IEnumerable<Employee>> searchEmployeeAsync(EmployeeSearchDTO searchDTO);
 
 
     }

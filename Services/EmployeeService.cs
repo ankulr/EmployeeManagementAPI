@@ -5,6 +5,7 @@ using EmployeeManagement.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 using FluentValidation;
 using AutoMapper;
+using EmployeeManagement.DTOs.Common;
 namespace EmployeeManagement.Services
 {
     public class EmployeeService : IEmployeeService
@@ -15,7 +16,7 @@ namespace EmployeeManagement.Services
         private readonly IMapper _mapper;
 
 
-        public EmployeeService(IEmployeeRepository employeeRepository , ILogger<EmployeeService> logger , IValidator<CreateEmployeeDTO> createEmployeeValidator ,IMapper mapper)
+        public EmployeeService(IEmployeeRepository employeeRepository, ILogger<EmployeeService> logger, IValidator<CreateEmployeeDTO> createEmployeeValidator, IMapper mapper)
         {
             _employeeRepository = employeeRepository;
             _logger = logger;
@@ -27,26 +28,26 @@ namespace EmployeeManagement.Services
             _logger.LogInformation("Creating employee with email {Email}", dto.Email);
 
             var validResult = await _createEmployeeValidator.ValidateAsync(dto);
-            if(!validResult.IsValid)
+            if (!validResult.IsValid)
             {
                 var errors = string.Join(",", validResult.Errors.Select(x => x.ErrorMessage));
                 throw new BadRequestException(errors);
             }
 
             // Duplicate email
-            bool emailexists =  await  _employeeRepository.EmailExitsAsync(dto.Email);
-            if(emailexists)
+            bool emailexists = await _employeeRepository.EmailExitsAsync(dto.Email);
+            if (emailexists)
             {
                 _logger.LogWarning("Employee creation failed.Email {Email} already exists");
-               
+
                 throw new ConflictException("Email alreday exists");
             }
 
             // Department exists
 
-            bool departmentExists = await _employeeRepository.DepartmentExistsAsync(dto.DepartmentId);  
+            bool departmentExists = await _employeeRepository.DepartmentExistsAsync(dto.DepartmentId);
 
-            if(!departmentExists)
+            if (!departmentExists)
             {
                 _logger.LogWarning("Employee creation failed.Department {DepartmentId} does not exist", dto.DepartmentId);
                 throw new BadRequestException("Department doesnot exist");
@@ -65,7 +66,7 @@ namespace EmployeeManagement.Services
             // Entity mapping from Employee to dto
 
             EmployeeResponseDTO response = _mapper.Map<EmployeeResponseDTO>(savedEmployee);
-           
+
 
             return response;
 
@@ -76,7 +77,7 @@ namespace EmployeeManagement.Services
             _logger.LogInformation("Deleting employee with id {EmployeeId}", id);
             Employee employee = await _employeeRepository.GetByIdAsync(id);
 
-            if(employee == null)
+            if (employee == null)
             {
                 _logger.LogWarning("Delete failed. Employee {EmployeeId} not found", id);
                 throw new NotFoundException("Employee not found");
@@ -100,7 +101,7 @@ namespace EmployeeManagement.Services
 
             // returning employee response list
 
-            
+
 
 
         }
@@ -110,7 +111,7 @@ namespace EmployeeManagement.Services
             _logger.LogInformation("fetching Employee with {EmployeeId}", id);
             var employee = await _employeeRepository.GetByIdAsync(id);
 
-            if(employee == null)
+            if (employee == null)
             {
                 _logger.LogWarning("Employee with id {EmployeeId} was not found", id);
 
@@ -171,12 +172,19 @@ namespace EmployeeManagement.Services
             // Updated employee to response dto
 
             return _mapper.Map<EmployeeResponseDTO>(updatedEmployee);
-        
-           
+
+
         }
         public async Task<IEnumerable<EmployeeResponseDTO>> GetPagedEmployeeAsync(int pageNumber, int pageSize)
         {
-            var employees = await _employeeRepository.GetPagedEmployeeAsync(pageNumber , pageSize);
+            var employees = await _employeeRepository.GetPagedEmployeeAsync(pageNumber, pageSize);
+
+            return _mapper.Map<IEnumerable<EmployeeResponseDTO>>(employees);
+        }
+
+        public async Task<IEnumerable<EmployeeResponseDTO>> SearchEmployeeAsync(EmployeeSearchDTO searchDTO)
+        {
+            var employees = await _employeeRepository.searchEmployeeAsync(searchDTO);
 
             return _mapper.Map<IEnumerable<EmployeeResponseDTO>>(employees);
         }

@@ -2,6 +2,7 @@
 using EmployeeManagement.Models;
 using EmployeeManagement.Data;
 using Microsoft.EntityFrameworkCore;
+using EmployeeManagement.DTOs.Common;
 
 namespace EmployeeManagement.Repositories
 {
@@ -58,6 +59,33 @@ namespace EmployeeManagement.Repositories
         public async Task<IEnumerable<Employee>> GetPagedEmployeeAsync(int pageNumber ,int pageSize)
         {
             return await _context.Employees.Include(e => e.Department).Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+        }
+
+        public async Task<IEnumerable<Employee>> searchEmployeeAsync(EmployeeSearchDTO searchDTO)
+        {
+            IQueryable<Employee> query = _context.Employees.Include(e => e.Department);
+
+            if(searchDTO.DepartmentId.HasValue)
+            {
+                query = query.Where(e => e.DepartmentId == searchDTO.DepartmentId.Value);
+            }
+
+            if(!string.IsNullOrWhiteSpace(searchDTO.SortBY))
+            {
+                if(searchDTO.SortBY.ToLower() == "salary")
+                {
+                    query = searchDTO.SortOrder?.ToLower() =="desc"
+                        ?query.OrderByDescending(e => e.Salary):query.OrderBy(e => e.Salary);
+                }
+                else if(searchDTO.SortBY.ToLower() =="name")
+                {
+                    query = searchDTO.SortOrder?.ToLower() == "desc"
+                        ? query.OrderByDescending(e => e.Name) : query.OrderBy(e => e.Name);
+                }
+            }
+            query = query.Skip((searchDTO.PageNumber - 1) * searchDTO.PageSize).Take(searchDTO.PageSize);
+            return await query.ToListAsync();
+
         }
     }
 }

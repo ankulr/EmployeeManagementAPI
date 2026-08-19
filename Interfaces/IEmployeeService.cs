@@ -1,4 +1,5 @@
 ﻿using EmployeeManagement.DTOs;
+using EmployeeManagement.DTOs.Common;
 
 namespace EmployeeManagement.Interfaces
 {
@@ -11,5 +12,6 @@ namespace EmployeeManagement.Interfaces
         Task<EmployeeResponseDTO> UpdateEmployeeAsync(int id, UpdateEmployeeDTO dto);
         Task DeleteEmployeeAsync(int id);
         Task<IEnumerable<EmployeeResponseDTO>> GetPagedEmployeeAsync(int pageNumber, int pageSize);
+        Task<IEnumerable<EmployeeResponseDTO>> SearchEmployeeAsync(EmployeeSearchDTO searchDTO);
     }
 }
